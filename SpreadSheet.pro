@@ -22,3 +22,6 @@ HEADERS  += mainwindow.h \
     gotocelldialog.h \
     finddialog.h \
     dialog.h
+
+RESOURCES += \
+    image.qrc
