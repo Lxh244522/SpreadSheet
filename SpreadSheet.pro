@@ -25,3 +25,6 @@ HEADERS  += mainwindow.h \
 
 RESOURCES += \
     image.qrc
+
+FORMS += \
+    sortdialog.ui
