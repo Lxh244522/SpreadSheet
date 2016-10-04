@@ -7,6 +7,7 @@
 #include <QMenuBar>
 #include <QTabWidget>
 #include <QToolBar>
+#include <QStatusBar>
 #include "dialog.h"
 #include "gotocelldialog.h"
 #include "finddialog.h"
@@ -31,6 +32,19 @@ private:
     void readSettings();
     void writeSettings();
 
+private slots:
+    void newFile();
+//    void open();
+//    bool save();
+//    bool saveAs();
+//    void find();
+//    void goToCell();
+//    void sort();
+//    void about();
+//    void openRecentFile();
+//    void updateStatusBar();
+//    void spreadsheetModified();
+
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
@@ -42,6 +56,9 @@ private:
     QLabel *formulaLabel;
     QStringList recentFiles;
     QString curFile;
+
+    QToolBar *fileToolBar;
+    QToolBar *editToolBar;
 
     enum { MaxRecentFile = 5 };
     QAction *recentFileActions[MaxRecentFile];
@@ -64,6 +81,16 @@ private:
     QAction *pasteAction;
     QAction *deleteAction;
     QAction *selectAction;
+    QMenu *subMenu;
+    QAction *rowAction;
+    QAction *columnAction;
+    QAction *allAction;
+    QAction *findAction;
+    QAction *goToCellAction;
+
+    //Help Action
+    QAction *aboutAction;
+    QAction *aboutQtAction;
 };
 
 #endif // MAINWINDOW_H
