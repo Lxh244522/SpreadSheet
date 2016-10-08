@@ -16,12 +16,16 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     finddialog.cpp \
     gotocelldialog.cpp \
-    dialog.cpp
+    dialog.cpp \
+    spreadsheetdelegate.cpp \
+    spreadsheetitem.cpp
 
 HEADERS  += mainwindow.h \
     gotocelldialog.h \
     finddialog.h \
-    dialog.h
+    dialog.h \
+    spreadsheetdelegate.h \
+    spreadsheetitem.h
 
 RESOURCES += \
     image.qrc

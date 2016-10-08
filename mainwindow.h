@@ -1,13 +1,16 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#define MagicNumber 0x7F51C883
+
 #include <QMainWindow>
 #include <QAction>
 #include <QMenu>
 #include <QMenuBar>
-#include <QTabWidget>
 #include <QToolBar>
 #include <QStatusBar>
+#include <QTabWidget>
+#include <QTableWidgetItem>
 #include "dialog.h"
 #include "gotocelldialog.h"
 #include "finddialog.h"
@@ -29,8 +32,17 @@ private:
     void createContextMenu();
     void createToolBars();
     void createStatusBar();
-    void readSettings();
-    void writeSettings();
+    void setupContents();
+    bool writeFile(const QString &fileName);
+    QString forMula(int row, int col);
+//    void readSettings();
+//    void writeSettings();
+    bool okToContinue();
+//    bool loadFile(const QString &fileName);
+//    bool saveFile(const QString &fileName);
+    void setCurrentFile(const QString &fileName);
+    void updateRecentFileActions();
+//    QString strippedName(const QString &fullFileName);
 
 private slots:
     void newFile();
@@ -41,16 +53,17 @@ private slots:
 //    void goToCell();
 //    void sort();
 //    void about();
-//    void openRecentFile();
+    void openRecentFile();
 //    void updateStatusBar();
 //    void spreadsheetModified();
 
 public:
-    MainWindow(QWidget *parent = 0);
+    //MainWindow(QWidget *parent = 0);
+    MainWindow(int rows, int cols, QWidget *parent = 0);
     ~MainWindow();
 
 private:
-    QTabWidget *tabWidget;
+    QTableWidget *tableWidget;
     FindDialog *findDialog;
     QLabel *locationLabel;
     QLabel *formulaLabel;
@@ -92,5 +105,7 @@ private:
     QAction *aboutAction;
     QAction *aboutQtAction;
 };
+
+void decode_pos(const QString &pos, int *row, int *col);
 
 #endif // MAINWINDOW_H

@@ -2,7 +2,8 @@
 #define SPREADSHEETITEM_H
 
 #include <QTableWidgetItem>
-#include "spreadsheet.h"
+#include "mainwindow.h"
+
 class SpreadSheetItem : public QTableWidgetItem
 {
 public:
@@ -10,6 +11,7 @@ public:
     SpreadSheetItem(const QString &text);
 
     QTableWidgetItem *clone() const Q_DECL_OVERRIDE;
+
     QVariant data(int role) const Q_DECL_OVERRIDE;
     void setData(int role, const QVariant &value) Q_DECL_OVERRIDE;
     QVariant display() const;

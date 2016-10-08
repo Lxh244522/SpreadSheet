@@ -2,7 +2,7 @@
 #define SPREADSHEETDELEGATE_H
 #include <QItemDelegate>
 
-#include "spreadsheet.h"
+#include "mainwindow.h"
 
 class SpreadSheetDelegate : public QItemDelegate
 {
