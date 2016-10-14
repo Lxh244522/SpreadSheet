@@ -12,8 +12,8 @@
 #include <QTabWidget>
 #include <QTableWidgetItem>
 #include "dialog.h"
-#include "gotocelldialog.h"
 #include "finddialog.h"
+#include "celldialog.h"
 
 //QT_BEGIN_NAMESPACE
 //class QTabWidget;
@@ -27,6 +27,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 private:
+
     void createActions();
     void createMenus();
     void createContextMenu();
@@ -34,10 +35,13 @@ private:
     void createStatusBar();
     void setupContents();
     bool writeFile(const QString &fileName);
+    bool readFile(const QString &fileName);
     QString forMula(int row, int col);
+    void setFormula(int row, int col, QString str);
 //    void readSettings();
 //    void writeSettings();
     bool okToContinue();
+    void clear();
 //    bool loadFile(const QString &fileName);
 //    bool saveFile(const QString &fileName);
     void setCurrentFile(const QString &fileName);
@@ -46,11 +50,11 @@ private:
 
 private slots:
     void newFile();
-//    void open();
-//    bool save();
+    void open();
+    bool save();
 //    bool saveAs();
 //    void find();
-//    void goToCell();
+    void goToCell();
 //    void sort();
 //    void about();
     void openRecentFile();
@@ -64,7 +68,7 @@ public:
 
 private:
     QTableWidget *tableWidget;
-    FindDialog *findDialog;
+
     QLabel *locationLabel;
     QLabel *formulaLabel;
     QStringList recentFiles;

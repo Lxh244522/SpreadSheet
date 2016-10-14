@@ -15,17 +15,17 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     finddialog.cpp \
-    gotocelldialog.cpp \
     dialog.cpp \
     spreadsheetdelegate.cpp \
-    spreadsheetitem.cpp
+    spreadsheetitem.cpp \
+    celldialog.cpp
 
 HEADERS  += mainwindow.h \
-    gotocelldialog.h \
     finddialog.h \
     dialog.h \
     spreadsheetdelegate.h \
-    spreadsheetitem.h
+    spreadsheetitem.h \
+    celldialog.h
 
 RESOURCES += \
     image.qrc

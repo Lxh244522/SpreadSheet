@@ -1,8 +1,9 @@
 #include "spreadsheetdelegate.h"
+
 #include <QtWidgets>
 
 SpreadSheetDelegate::SpreadSheetDelegate(QObject *parent)
-          : QItemDelegate(parent) {}
+        : QItemDelegate(parent) {}
 
 QWidget *SpreadSheetDelegate::createEditor(QWidget *parent,
                                           const QStyleOptionViewItem &,
@@ -14,12 +15,15 @@ QWidget *SpreadSheetDelegate::createEditor(QWidget *parent,
         editor->setCalendarPopup(true);
         return editor;
     }
+
     QLineEdit *editor = new QLineEdit(parent);
+
     // create a completer with the strings in the column as model
     QStringList allStrings;
     for (int i = 1; i<index.model()->rowCount(); i++) {
         QString strItem(index.model()->data(index.sibling(i, index.column()),
             Qt::EditRole).toString());
+
         if (!allStrings.contains(strItem))
             allStrings.append(strItem);
     }

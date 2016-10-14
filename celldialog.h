@@ -2,19 +2,20 @@
 #define DIALOG_H
 
 #include <QDialog>
+#include <QWidget>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
 
-class GoToCellDialog : public QDialog
+class CellDialog : public QDialog
 {
     Q_OBJECT
 private slots:
     void enableokButton();
 
 public:
-    GoToCellDialog(QWidget *parent = 0);
-    ~GoToCellDialog();
+    CellDialog(QWidget *parent = 0);
+    ~CellDialog();
 
 private:
     QLabel *label;

@@ -5,7 +5,8 @@
 #include <QLayout>
 #include <QMessageBox>
 #include <QFile>
-#include <QDir>
+#include <QFileDialog>
+#include <QDebug>
 
 MainWindow::MainWindow(int rows, int cols, QWidget *parent)
     : QMainWindow(parent)
@@ -28,6 +29,7 @@ MainWindow::MainWindow(int rows, int cols, QWidget *parent)
     createToolBars();
     createStatusBar();
     setupContents();
+
 
     this->layout()->setSizeConstraint(QLayout::SetFixedSize);
 }
@@ -55,21 +57,27 @@ void MainWindow::createActions()
     newAction->setIcon(QIcon(":/images/new.png"));
     newAction->setShortcut(QKeySequence::New);
     newAction->setStatusTip(tr("Create a new spreadsheet file"));
-    connect(newAction, SIGNAL(triggered(bool)), this, SLOT(newFile()));
+    connect(newAction, SIGNAL(triggered()), this, SLOT(newFile()));
 
     openAction = new QAction(tr("&Open"), this);
     openAction->setIcon(QIcon(":/images/open.png"));
     openAction->setShortcut(QKeySequence::Open);
     openAction->setStatusTip(tr("Open a new spreadsheet file"));
+    connect(openAction, SIGNAL(triggered(bool)), this, SLOT(open()));
 
     saveAction = new QAction(QIcon(":/images/save.png"), tr("&Save"), this);
     saveAction->setShortcut(QKeySequence::Save);
     saveAction->setStatusTip(tr("Save spreadsheet file"));
+    connect(saveAction, SIGNAL(triggered()), this, SLOT(save()));
 
     saveAsAction = new QAction(tr("Save &As..."), this);
     separatorAction = new QAction(this);
     exitAction = new QAction(tr("&Exit"), this);
     exitAction->setShortcut(QKeySequence::Quit);
+
+    separatorAction = new QAction(this);
+    separatorAction->setSeparator(true);
+    separatorAction->setVisible(false);
 
     //Edit Menu Action
     cutAction = new QAction(QIcon(":/images/cut.png"), tr("Cut"), this);
@@ -165,6 +173,7 @@ void MainWindow::createStatusBar()
 
 void MainWindow::setupContents()
 {
+    clear();
     QColor titleBackground(Qt::lightGray);
     QFont titleFont = tableWidget->font();
     titleFont.setBold(true);
@@ -187,20 +196,58 @@ bool MainWindow::writeFile(const QString &fileName)
         return false;
     }
     QDataStream out(&file);
-    out.setVersion(QDataStream::Qt_4_3);
+    out.setVersion(QDataStream::Qt_4_8);
 
-    out<<quint32(MagicNumber);
     QApplication::setOverrideCursor(Qt::WaitCursor);
+    out << quint32(MagicNumber);
 
     int RowCount = tableWidget->rowCount();
     int ColumnCount = tableWidget->columnCount();
 
-    for (int row=0; row < RowCount; ++row){
-        for (int column=0; column<ColumnCount; ++ column){
+    for (int row=0; row<RowCount; row++){
+        for (int column=0; column<ColumnCount; column++){
             QString str = forMula(row, column);
-            if(!str.isEmpty())
+            if(!str.isEmpty()){
                 out << quint16(row) << quint16(column) << str;
+            }
         }
+    }
+    QApplication::restoreOverrideCursor();
+
+    return true;
+}
+
+bool MainWindow::readFile(const QString &fileName)
+{
+    QFile file(fileName);
+    if(!file.open(QIODevice::ReadOnly)){
+        QMessageBox::warning(this, tr("SpreadSheet"),
+                             tr("Cannot read file %1:\n%2.")
+                             .arg(file.fileName())
+                             .arg(file.errorString()));
+        return false;
+    }
+
+    QDataStream in(&file);
+    in.setVersion(QDataStream::Qt_4_8);
+
+    quint32 magic;
+    in >> magic;
+    if(magic != MagicNumber){
+        QMessageBox::warning(this, tr("Spreadsheet"),
+                    tr("The file is not a Spreadsheet file."));
+        return false;
+    }
+
+    clear();
+
+    quint16 row, column;
+    QString str;
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    while(!in.atEnd()){
+        in >> row >> column >> str;
+        setFormula(row, column, str);
     }
     QApplication::restoreOverrideCursor();
     return true;
@@ -208,9 +255,16 @@ bool MainWindow::writeFile(const QString &fileName)
 
 QString MainWindow::forMula(int row, int col)
 {
-    QTableWidgetItem *item = new QTableWidgetItem;
-    item = tableWidget->item(row, col);
-    return item->text();
+    QString str = tableWidget->item(row, col)->text();
+    return str;
+}
+
+void MainWindow::setFormula(int row, int col, QString str)
+{
+    QTableWidgetItem *item = new QTableWidgetItem();
+
+    item->setText(str);
+    tableWidget->setItem(row, col, item);
 }
 
 bool MainWindow::okToContinue()
@@ -229,6 +283,19 @@ bool MainWindow::okToContinue()
     return true;
 }
 
+void MainWindow::clear()
+{
+    //tableWidget->clearContents();
+    int rowCount = tableWidget->rowCount();
+    int colCount = tableWidget->columnCount();
+
+    for (int row=0; row<rowCount; row++){
+        for(int column=0; column<colCount; column++){
+            tableWidget->setItem(row, column, new SpreadSheetItem(""));
+        }
+    }
+}
+
 void MainWindow::setCurrentFile(const QString &fileName)
 {
     curFile = fileName;
@@ -236,7 +303,7 @@ void MainWindow::setCurrentFile(const QString &fileName)
 
     QString shownName = tr("Untitled");
     if(!curFile.isEmpty()){
-        shownName = strippedName(curFile);
+        shownName = curFile;
         recentFiles.removeAll(curFile);
         recentFiles.prepend(curFile);
         updateRecentFileActions();
@@ -257,10 +324,12 @@ void MainWindow::updateRecentFileActions()
 
     for(int j=0; j<MaxRecentFile; j++){
         if(j<recentFiles.count()){
+//            QString text = tr("&%1 %2").arg(j + 1)
+//                                       .arg(strippedName(recentFiles[j]));
             QString text = tr("&%1 %2").arg(j + 1)
-                                       .arg(strippedName(recentFiles[j]));
+                                       .arg(recentFiles[j]);
             recentFileActions[j]->setText(text);
-            recentFileActions[j]->setData(recnetFile[j]);
+            recentFileActions[j]->setData(recentFiles[j]);
             recentFileActions[j]->setVisible(true);
         } else {
             recentFileActions[j]->setVisible(false);
@@ -278,12 +347,40 @@ void MainWindow::newFile()
     }
 }
 
+void MainWindow::open()
+{
+    QString fileName;
+
+    fileName = QFileDialog::getOpenFileName(this, tr("Spreadsheet"), QDir::currentPath(), tr("Spreadsheet file (*sp)"));
+    readFile(fileName);
+
+}
+
+bool MainWindow::save()
+{
+    QString fileName;
+
+    fileName = QFileDialog::getSaveFileName(this, tr("Spreadsheet"), QDir::currentPath(), tr("Spreadsheet file (*.sp)"));
+    //qDebug() << fileName;
+
+    bool flag = writeFile(fileName);
+    if(flag){
+        QMessageBox::information(this, tr("Spreadsheet"), tr("Save Success!"));
+    }
+    return flag;
+}
+
+void MainWindow::goToCell()
+{
+
+}
+
 void MainWindow::openRecentFile()
 {
     if(okToContinue()){
-        QAction *action = qboject_cast<QAction *>(sender());
+        QAction *action = qobject_cast<QAction *>(sender());
         if(action){
-            loadFile(action->data().toString());
+            readFile(action->data().toString());
         }
     }
 }
