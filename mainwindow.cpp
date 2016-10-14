@@ -108,6 +108,7 @@ void MainWindow::createActions()
 
     goToCellAction = new QAction(tr("&Go to Cell"), this);
     goToCellAction->setShortcut(QKeySequence::FindNext);
+    connect(goToCellAction, SIGNAL(triggered(bool)), this, SLOT(goToCell()));
 
     aboutAction = new QAction(tr("&About"), this);
 
@@ -372,7 +373,12 @@ bool MainWindow::save()
 
 void MainWindow::goToCell()
 {
-
+    GoToCellDialog *dialog = new GoToCellDialog(this);
+    if(dialog->exec()){
+        QString str = dialog->lineEdit->text().toUpper();
+        tableWidget->setCurrentCell(str.mid(1).toInt()-1, str[0].unicode()-'A');
+    }
+    delete dialog;
 }
 
 void MainWindow::openRecentFile()

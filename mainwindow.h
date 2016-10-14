@@ -13,7 +13,7 @@
 #include <QTableWidgetItem>
 #include "dialog.h"
 #include "finddialog.h"
-#include "celldialog.h"
+#include "gotocelldialog.h"
 
 //QT_BEGIN_NAMESPACE
 //class QTabWidget;
@@ -27,7 +27,6 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 private:
-
     void createActions();
     void createMenus();
     void createContextMenu();

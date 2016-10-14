@@ -1,10 +1,10 @@
-#include "celldialog.h"
+#include "gotocelldialog.h"
 #include <QtGui>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QRegExp>
 
-CellDialog::CellDialog(QWidget *parent)
+GoToCellDialog::GoToCellDialog(QWidget *parent)
     : QDialog(parent)
 {
     label = new QLabel(tr("&Cell Location:"), this);
@@ -41,12 +41,12 @@ CellDialog::CellDialog(QWidget *parent)
     setFixedHeight(sizeHint().height());
 }
 
-void CellDialog::enableokButton()
+void GoToCellDialog::enableokButton()
 {
     okButton->setEnabled(lineEdit->hasAcceptableInput());
 }
 
-CellDialog::~CellDialog()
+GoToCellDialog::~GoToCellDialog()
 {
 
 }

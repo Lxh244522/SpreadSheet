@@ -1,5 +1,5 @@
-#ifndef DIALOG_H
-#define DIALOG_H
+#ifndef GOTOCELLDIALOG_H
+#define GOTOCELLDIALOG_H
 
 #include <QDialog>
 #include <QWidget>
@@ -7,21 +7,23 @@
 #include <QLineEdit>
 #include <QPushButton>
 
-class CellDialog : public QDialog
+class GoToCellDialog : public QDialog
 {
     Q_OBJECT
 private slots:
     void enableokButton();
 
 public:
-    CellDialog(QWidget *parent = 0);
-    ~CellDialog();
+    GoToCellDialog(QWidget *parent = 0);
+    ~GoToCellDialog();
+
+public:
+    QLineEdit *lineEdit;
 
 private:
     QLabel *label;
-    QLineEdit *lineEdit;
     QPushButton *okButton;
     QPushButton *cancelButton;
 };
 
-#endif // DIALOG_H
+#endif // CELLDIALOG_H
