@@ -37,8 +37,8 @@ private:
     bool readFile(const QString &fileName);
     QString forMula(int row, int col);
     void setFormula(int row, int col, QString str);
-//    void readSettings();
-//    void writeSettings();
+    void readSettings();
+    void writeSettings();
     bool okToContinue();
     void clear();
 //    bool loadFile(const QString &fileName);
@@ -55,7 +55,7 @@ private slots:
 //    void find();
     void goToCell();
 //    void sort();
-//    void about();
+    void about();
     void openRecentFile();
 //    void updateStatusBar();
 //    void spreadsheetModified();

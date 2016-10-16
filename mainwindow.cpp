@@ -7,6 +7,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QDebug>
+#include <QSettings>
 
 MainWindow::MainWindow(int rows, int cols, QWidget *parent)
     : QMainWindow(parent)
@@ -29,6 +30,10 @@ MainWindow::MainWindow(int rows, int cols, QWidget *parent)
     createToolBars();
     createStatusBar();
     setupContents();
+
+//    tableWidget->addAction(copyAction);
+//    tableWidget->addAction(cutAction);
+//    tableWidget->addAction(pasteAction);
 
 
     this->layout()->setSizeConstraint(QLayout::SetFixedSize);
@@ -111,6 +116,7 @@ void MainWindow::createActions()
     connect(goToCellAction, SIGNAL(triggered(bool)), this, SLOT(goToCell()));
 
     aboutAction = new QAction(tr("&About"), this);
+    connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
 
     aboutQtAction = new QAction(tr("About &Qt"), this);
     connect(aboutQtAction, SIGNAL(triggered(bool)), qApp, SLOT(aboutQt()));
@@ -268,6 +274,23 @@ void MainWindow::setFormula(int row, int col, QString str)
     tableWidget->setItem(row, col, item);
 }
 
+void MainWindow::readSettings()
+{
+    QSettings settings("Software Inc.", "Spreadsheet");
+
+    restoreGeometry(settings.value("geometry").toByteArray());
+    recentFiles = settings.value("recentFiles").toStringList();
+}
+
+void MainWindow::writeSettings()
+{
+    QSettings settings("Software Inc.", "Spreadsheet");
+
+    settings.setValue("geometry", saveGeometry());
+    settings.setValue("recentFiles", recentFiles);
+
+}
+
 bool MainWindow::okToContinue()
 {
     if(isWindowModified()){
@@ -379,6 +402,17 @@ void MainWindow::goToCell()
         tableWidget->setCurrentCell(str.mid(1).toInt()-1, str[0].unicode()-'A');
     }
     delete dialog;
+}
+
+void MainWindow::about()
+{
+    QMessageBox::about(this, tr("About Spreadsheet"),
+                       tr("<h2>Spreadsheet 1.1</h2>"
+                          "<p>Copyright &copy; 2008 Software Inc"
+                          "<p>Spreadsheet is a small application that"
+                          "demonstrates QAction, QMainWindow, QMenuBar,"
+                          "QStatuBar, QTableWidget, QToolBar, and many other"
+                          "Qt classes."));
 }
 
 void MainWindow::openRecentFile()
